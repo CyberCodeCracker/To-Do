@@ -29,6 +29,17 @@ export class TasksService {
     },
   ];
 
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    const tasks = localStorage.getItem('tasks');
+    if (tasks) {
+      this.tasks = JSON.parse(tasks)
+    } else {
+      this.tasks = [];
+    }
+  }
+
   getSelectedUserTasks(selectedUserId: string) {
     return this.tasks.filter((task) => task.userId === selectedUserId);
   }
@@ -41,13 +52,15 @@ export class TasksService {
       summary: newTask.summary,
       dueDate: newTask.date,
     });
-  }
-
-  removeTask(taskId: string) {
-    this.tasks = this.tasks.filter((task) => task.id !== taskId);
+    this.saveTasks();
   }
 
   completeTask(taskId: string) {
     this.tasks = this.tasks.filter((task) => task.id !== taskId);
+    this.saveTasks();
+  }
+
+  private saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(this.tasks));
   }
 }
